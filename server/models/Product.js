@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
+const Image = require('./Image');
 
 const ProductSchema = new mongoose.Schema(
     {
@@ -10,7 +11,8 @@ const ProductSchema = new mongoose.Schema(
         title: String,
         price: String,
         description: String,
-        productPhotoPath: String
+        tumbner: String,
+        images: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Image' }]
     },
     {
         timestamps: true

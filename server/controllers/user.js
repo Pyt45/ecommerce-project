@@ -1,7 +1,28 @@
-const bcrypt = require('bcryptjs');
-const { validationResult } = require('express-validator');
+require('dotenv').config();
 const User = require('../models/User');
-const jwt = require('jsonwebtoken');
+const generateToken = require('../utils/generateToken');
+const { validationResult } = require('express-validator');
+const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
+
+// const transporter = nodemailer.createTransport({
+//    service: 'Gmail',
+//    auth: {
+//        user: process.env.USER,
+//        pass: process.env.USER_PASSWORD
+//    }
+// });
+
+const testAcount = nodemailer.createTestAccount();
+
+const transporter = nodemailer.createTransport({
+    host: "smtp.ethereal.email",
+    port: 587,
+    auth: {
+        user: testAcount.user,
+        pass: testAcount.pass,
+    },
+});
 
 const onGetAllUsers = async (req, res) => { 
     try {
@@ -24,10 +45,10 @@ const onGetUserById = async (req, res) => {
 };
 
 const OnCreateUser = async (req, res) => {
-    const erros = validationResult(req);
+    const errors = validationResult(req);
 
-    if (!erros.isEmpty())
-        res.status(400).json(errors);
+    if (!errors.isEmpty())
+        return res.status(400).json(errors);
     const { firstname, lastname, email, password } = req.body;
     try {
         const oldUser = await User.findOne({ email: email })
@@ -35,7 +56,7 @@ const OnCreateUser = async (req, res) => {
             return res.status(400).json({
                 errors: [
                     {
-                        msg: 'User Alredy Exist'
+                        msg: 'Email Alredy Exist'
                     }
                 ]
             });
@@ -44,11 +65,27 @@ const OnCreateUser = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
 
-        const user = await User.CreateUser(firstname, lastname, email, hash);
+        let user = await User.CreateUser(firstname, lastname, email, hash);
+        user = await User.GetUserById(user._id);
+        
+        const payload = {
+            userID: user._id
+        };
+        const token = generateToken(payload);
+        const url = `${req.protocol}://${req.hostname}:${process.env.PORT}/verify/${token}`;
+
+        transporter.sendMail({
+            from: 'test <no-reply@example.com>',
+            to: email,
+            subject: 'Verify your account',
+            html: `Click <a href=${url}>here</a> to verify your account`
+        });
 
         return res.status(200).json({
             success: true,
-            userInfo: user
+            userInfo: user,
+            token: token,
+            emailVerfication: `we sent u an email to ${email}. Please verify your account`
         })
 
     } catch(err) {
@@ -57,7 +94,38 @@ const OnCreateUser = async (req, res) => {
     }
 };
 
-const OnLogIn = (req, res) => { };
+const OnLogIn = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+        return res.status(400).json(errors);
+    const { email, password } = req.body;
+    try {
+        const user = User.findOne({ email: email });
+
+        if (!user) {
+            return res.status(400).json({
+                msg: 'Invalid email or password'
+            })
+        }
+        const matched = await bcrypt.compare(password, user.password);
+        if (!matched) {
+            return res.status(400).json({
+                msg: 'Invalid email or password'
+            })
+        }
+        if (!user.active) {
+            return res.status(400).json({
+                msg: 'Please make sure your account is activated'
+            })
+        }
+        return res.status(400).json({
+            msg: 'Logged in succesfuly'
+        })  
+    } catch(err) {
+        console.log(err.message);
+        res.status(500).send('server error');
+    }
+};
 
 const onDeleteUserById = async (req, res) => {
     try {
@@ -71,10 +139,37 @@ const onDeleteUserById = async (req, res) => {
     }
 };
 
+const verfiy = async (req, res) => {
+    try {
+        const { token } = req.params;
+        if (!token) {
+            return res.status(400).json({
+                msg: 'No token found'
+            })
+        }
+        const payload = jwt.verfiy(token, process.env.JWT_SECRET);
+        const user = User.findOne({ _id: payload.ID });
+        if (!user) {
+            return res.status(400).json({
+                msg: 'User does not exist'
+            })
+        }
+        user.active = true;
+        await user.save();
+        return res.status(200).json({
+            msg: 'Account is activated'
+        });
+    }catch(err) {
+        console.log(err.message);
+        res.status(500).send('server error');
+    } 
+}
+
 module.exports = {
     onGetAllUsers,
     onGetUserById,
     OnCreateUser,
     OnLogIn,
     onDeleteUserById,
+    verfiy
 }

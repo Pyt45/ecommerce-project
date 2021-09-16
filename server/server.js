@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const connectDb = require('./utils/connectDb');
 const userRouter = require('./routes/user');
@@ -10,6 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extends: true }));
 
 app.use('/users', userRouter);
+
 
 app.use('*', (req, res) => {
     res.status(400).json({
