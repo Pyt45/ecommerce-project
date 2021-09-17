@@ -3,26 +3,11 @@ const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
+const jwt = require('jsonwebtoken');
 
-// const transporter = nodemailer.createTransport({
-//    service: 'Gmail',
-//    auth: {
-//        user: process.env.USER,
-//        pass: process.env.USER_PASSWORD
-//    }
-// });
 
-const testAcount = nodemailer.createTestAccount();
-
-const transporter = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
-    port: 587,
-    auth: {
-        user: testAcount.user,
-        pass: testAcount.pass,
-    },
-});
+sgMail.setApiKey(process.env.API_KEY);
 
 const onGetAllUsers = async (req, res) => { 
     try {
@@ -72,10 +57,10 @@ const OnCreateUser = async (req, res) => {
             userID: user._id
         };
         const token = generateToken(payload);
-        const url = `${req.protocol}://${req.hostname}:${process.env.PORT}/verify/${token}`;
+        const url = `${req.protocol}://${req.hostname}:${process.env.PORT}/users/verify/${token}`;
 
-        transporter.sendMail({
-            from: 'test <no-reply@example.com>',
+        sgMail.send({
+            from: 'mohammed.ymik@outlook.com',
             to: email,
             subject: 'Verify your account',
             html: `Click <a href=${url}>here</a> to verify your account`
@@ -147,8 +132,9 @@ const verfiy = async (req, res) => {
                 msg: 'No token found'
             })
         }
-        const payload = jwt.verfiy(token, process.env.JWT_SECRET);
-        const user = User.findOne({ _id: payload.ID });
+        const payload = await jwt.verify(token, process.env.JWT_SECRET);
+
+        const user = await User.findOne({ _id: payload.userID });
         if (!user) {
             return res.status(400).json({
                 msg: 'User does not exist'

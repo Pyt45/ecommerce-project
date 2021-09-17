@@ -9,6 +9,7 @@ services:
             PORT: 9000
             MONGO_URL: mongodb://mongo:27017/db
             JWT_SECRET: "some_secure_tkn"
+            API_KEY: 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
         ports:
             - "9000:9000"
         volumes:
