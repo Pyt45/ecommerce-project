@@ -1,19 +1,19 @@
 const mongoose = require('mongoose');
 const { v4: uuid4v } = require('uuid');
-const SubCategory = require('./SubCategory');
+const Product = require('./Product');
 
-const CategorySchema = new mongoose.Schema(
+const SubCategorySchema = new mongoose.Schema(
     {
         _id: {
             type: String,
             default: () => uuid4v().replace(/\-/g, "")
         },
         title: String,
-        subCategories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory' }]
+        products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
     },
     {
         timestamps: true
     }
 );
 
-module.exports = mongoose.model('Category', CategorySchema);
+module.exports = mongoose.model('SubCategory', SubCategorySchema);

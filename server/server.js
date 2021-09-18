@@ -4,6 +4,7 @@ const connectDb = require('./utils/connectDb');
 const userRouter = require('./routes/user');
 const productRouter = require('./routes/product');
 const path = require('path');
+const cors = require('cors');
 const app = express();
 
 
@@ -11,6 +12,12 @@ connectDb(process.env.MONGO_URL);
 
 app.use(express.json());
 app.use(express.urlencoded({ extends: true }));
+
+app.use(cors({
+    origin: '*'
+}));
+
+app.use(express.static('uploads'));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/index.html'));

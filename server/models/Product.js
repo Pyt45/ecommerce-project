@@ -20,9 +20,9 @@ const ProductSchema = new mongoose.Schema(
     }
 );
 
-ProductSchema.statics.createProduct = async function(title, price, description, quantity, thumbnail) {
+ProductSchema.statics.createProduct = async function(title, price, description, quantity) {
     try {
-        const product = await this.create({title, price, description, quantity, thumbnail});
+        const product = await this.create({title, price, description, quantity});
         return product;
     } catch(err) {
         throw err;

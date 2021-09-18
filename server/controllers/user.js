@@ -22,6 +22,14 @@ const onGetAllUsers = async (req, res) => {
 const onGetUserById = async (req, res) => {
     try {
         const user = await User.GetUserById(req.params.id);
+        if (!user)
+            return res.status(400).json({
+                errors: [
+                    {
+                        msg: 'User Not Found'
+                    }
+                ]
+            })
         return res.status(200).json(user);
     }catch(err) {
         console.log(err.message);
@@ -70,7 +78,7 @@ const OnCreateUser = async (req, res) => {
             success: true,
             userInfo: user,
             token: token,
-            emailVerfication: `we sent u an email to ${email}. Please verify your account`
+            emailVerfication: `We sent you an email to ${email}. Please verify your account`
         })
 
     } catch(err) {
@@ -85,22 +93,34 @@ const OnLogIn = async (req, res) => {
         return res.status(400).json(errors);
     const { email, password } = req.body;
     try {
-        const user = User.findOne({ email: email });
+        const user = await User.findOne({ email: email });
 
         if (!user) {
             return res.status(400).json({
-                msg: 'Invalid email or password'
+                errors: [
+                    {
+                        msg: 'Invalid email or password'
+                    }
+                ]
             })
         }
         const matched = await bcrypt.compare(password, user.password);
         if (!matched) {
             return res.status(400).json({
-                msg: 'Invalid email or password'
+                errors: [
+                    {
+                        msg: 'Invalid email or password'
+                    }
+                ]
             })
         }
         if (!user.active) {
             return res.status(400).json({
-                msg: 'Please make sure your account is activated'
+                errors: [
+                    {
+                        msg: 'Please make sure that your account has been validated'
+                    }
+                ]
             })
         }
         return res.status(400).json({
@@ -129,7 +149,11 @@ const verfiy = async (req, res) => {
         const { token } = req.params;
         if (!token) {
             return res.status(400).json({
-                msg: 'No token found'
+                errors: [
+                    {
+                        msg: 'No Token Found'
+                    }
+                ]
             })
         }
         const payload = await jwt.verify(token, process.env.JWT_SECRET);
@@ -137,7 +161,11 @@ const verfiy = async (req, res) => {
         const user = await User.findOne({ _id: payload.userID });
         if (!user) {
             return res.status(400).json({
-                msg: 'User does not exist'
+                errors: [
+                    {
+                        msg: 'User does not exist'
+                    }
+                ]
             })
         }
         user.active = true;

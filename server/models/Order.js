@@ -1,17 +1,20 @@
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
 
-const ImageSchema = new mongoose.Schema(
+
+const OrderSchema = new mongoose.Schema(
     {
         _id: {
             type: String,
             default: () => uuidv4().replace(/\-/g, "")
         },
-        path: String
+        productId: String,
+        quantity: Number,
+        addressShipping: String,
     },
     {
         timestamps: true
     }
 );
 
-module.exports = mongoose.model('Image', ImageSchema);
+module.exports = OrderSchema.model('Order', OrderSchema);
