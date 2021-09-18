@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="/products/create" method="POST", enctype="multipart/form-data">
+        title: <input type="text" name="title"/>
+        price: <input type="number" name="price"/>
+        description: <input type="text" name="description"/>
+        quantity: <input type="number" name="quantity"/>
+        thumbnail: <input type="file" name="thumbnail"/>
+        <button type="submit"></button>
+    </form>
+</body>
+</html>
