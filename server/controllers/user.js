@@ -256,6 +256,34 @@ const OnChangePassword = async (req, res) => {
     }
 };
 
+const OnResetEmail = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+        return res.status(400).json(errors);
+    const { email } = req.body;
+    try {
+        const id = req.params.id;
+        const payload = {
+            userID: id
+        };
+
+        const token = generateToken(payload);
+        const url = `${req.protocol}://${req.hostname}:${process.env.PORT}/users/reset/email/${token}`;
+        /*sgMail.send({
+            from: 'mohammed.ymik@outlook.com',
+            to: email,
+            subject: 'Resetyour account',
+            html: `Click <a href=${url}>here</a> to reset your email`
+        });*/
+        return res.status(200).json({
+            url: url
+        });
+
+    }catch(err) {
+        return res.status(500).send('Internal server error');
+    }
+};
+
 module.exports = {
     onGetAllUsers,
     onGetUserById,
@@ -264,5 +292,6 @@ module.exports = {
     onDeleteUserById,
     verfiy,
     OnUpdateUserInfo,
-    OnChangePassword
+    OnChangePassword,
+    OnResetEmail
 }

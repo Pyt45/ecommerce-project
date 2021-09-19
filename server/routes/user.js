@@ -12,25 +12,28 @@ router
     .get('/', auth, admin, userController.onGetAllUsers)
     .get('/:id', auth, admin, userController.onGetUserById)
     .post('/signup',[
-        check('firstname').not().isEmpty(),
-        check('lastname').not().isEmpty(),
-        check('email').isEmail(),
-        check('password').isLength({ min: 6 })
+        check('firstname', 'firstname is empty').not().isEmpty(),
+        check('lastname', 'lastname is empty').not().isEmpty(),
+        check('email', 'invalid email').isEmail(),
+        check('password', 'min six characters').isLength({ min: 6 })
     ], userController.OnCreateUser)
     .get('/verify/:token', userController.verfiy)
     .post('/signin', [
-        check('email', 'The email is not valid').isEmail(),
+        check('email', 'invalid email').isEmail(),
         check('password', 'min six characters').isLength({ min: 6 })
     ], userController.OnLogIn)
     .put('/:id', auth, authUser, [
-        check('firstname').not().isEmpty(),
-        check('lastname').not().isEmpty(),
-        check('email').isEmail()
+        check('firstname', 'firstname is empty').not().isEmpty(),
+        check('lastname', 'lastname is empty').not().isEmpty(),
+        check('email', 'invalid email').isEmail()
     ], userController.OnUpdateUserInfo)
     .patch('/:id/changePAssword', auth, authUser, [
         check('password').isLength({ min: 6 }),
         check('newPassword').isLength({ min: 6 })
     ], userController.OnChangePassword)
+    .post('/reset/:id', auth, authUser, [
+        check('email', 'invalid email').isEmail()
+    ], userController.OnResetEmail)
     .delete('/:id', auth, admin, userController.onDeleteUserById)
     
 
