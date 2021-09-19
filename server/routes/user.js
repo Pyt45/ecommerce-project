@@ -4,6 +4,7 @@ const userController = require('../controllers/user');
 const router = express.Router();
 const auth = require('../middlewares/auth');
 const admin = require('../middlewares/admin');
+const authUser = require('../middlewares/authUser');
 
 // Reset route
 
@@ -20,7 +21,16 @@ router
     .post('/signin', [
         check('email', 'The email is not valid').isEmail(),
         check('password', 'min six characters').isLength({ min: 6 })
-    ],userController.OnLogIn)
+    ], userController.OnLogIn)
+    .put('/:id', auth, authUser, [
+        check('firstname').not().isEmpty(),
+        check('lastname').not().isEmpty(),
+        check('email').isEmail()
+    ], userController.OnUpdateUserInfo)
+    .patch('/:id/changePAssword', auth, authUser, [
+        check('password').isLength({ min: 6 }),
+        check('newPassword').isLength({ min: 6 })
+    ], userController.OnChangePassword)
     .delete('/:id', auth, admin, userController.onDeleteUserById)
     
 

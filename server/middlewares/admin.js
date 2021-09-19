@@ -1,4 +1,3 @@
-require('dotenv').config();
 const User = require('../models/User');
 
 const admin = async (req, res, next) => {
