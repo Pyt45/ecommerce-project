@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            default: "user"
+            default: 'User'
         }
     },
     {
@@ -37,7 +37,7 @@ UserSchema.statics.CreateUser = async function(firstname, lastname, email, passw
 
 UserSchema.statics.DeleteUserById = async function(id) {
     try {
-        const rsl = await this.remove({ _id: id });
+        const rsl = await this.deleteOne({ _id: id });
         return rsl;
     }catch(err) {
         throw err;

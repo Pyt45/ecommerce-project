@@ -103,24 +103,39 @@ const createProduct = async (req, res) => {
 
 const fetchProducts = async (req, res) => {
     try {
-        console.log("All product");
-        return res.status(200).send('All product');
+        const skip = parseInt(req.query.skip) || 0;
+        const limit = parseInt(req.query.limit) || 10;
+
+        const products = await Product.getAllProducts(skip, limit);
+        return res.status(200).json(products);
     } catch(err) {
         return res.status(500).send('Internal server error');
     }
 };
-const fetchProductById = async (req, res) => {};
+const fetchProductByTitle = async (req, res) => {
+    try {
+        const skip = parseInt(req.query.skip) || 0;
+        const limit = parseInt(req.query.limit) || 10;
+        const title = req.query.title || "";
 
+        const products = await Product.fetchByTitle(title, skip, limit);
+        return res.status(200).json(products);
+    } catch(err) {
+        return res.status(500).send('Internal server error');
+    }
+};
+
+
+const deleteProduct = async (req, res) => {};
 
 const updateProduct = async (req, res) => {};
 const updateProductThumbnail = async (req, res) => {};
 const updateProductImages = async (req, res) => {};
-const deleteProduct = async (req, res) => {};
 
 
 module.exports = {
     fetchProducts,
-    fetchProductById,
+    fetchProductByTitle,
     createProduct,
     updateProduct,
     updateProductThumbnail,

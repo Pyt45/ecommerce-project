@@ -9,7 +9,7 @@ const productController = require('../controllers/product');
 
 router
     .get('/', productController.fetchProducts)
-    .get('/:id', productController.fetchProductById)
+    .get('/', productController.fetchProductByTitle)
     .post('/create', [
         check('title').not().isEmpty(),
         check('price').isFloat(),

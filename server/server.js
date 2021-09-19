@@ -3,12 +3,14 @@ const express = require('express');
 const connectDb = require('./utils/connectDb');
 const userRouter = require('./routes/user');
 const productRouter = require('./routes/product');
+const connectAdmin = require('./utils/connectAdmin');
 const path = require('path');
 const cors = require('cors');
 const app = express();
 
 
 connectDb(process.env.MONGO_URL);
+connectAdmin();
 
 app.use(express.json());
 app.use(express.urlencoded({ extends: true }));

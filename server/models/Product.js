@@ -29,4 +29,23 @@ ProductSchema.statics.createProduct = async function(title, price, description, 
     }
 }
 
+ProductSchema.statics.getAllProducts = async function(skip, limit) {
+    try {
+        const products = await this.find().skip(skip).limit(limit);
+        return products;
+    }catch(err) {
+        throw err;
+    }
+}
+
+ProductSchema.statics.fetchByTitle = async function(title, skip, limit) {
+    try {
+        const products = await this.find({title: `/${title}/`}).skip(skip).limit(limit);
+
+        return products;
+    }catch(err) {
+        throw err;
+    }
+}
+
 module.exports = mongoose.model('Product', ProductSchema);

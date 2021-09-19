@@ -7,7 +7,7 @@ const sgMail = require('@sendgrid/mail');
 const jwt = require('jsonwebtoken');
 
 
-sgMail.setApiKey(process.env.API_KEY);
+// sgMail.setApiKey(process.env.API_KEY);
 
 const onGetAllUsers = async (req, res) => { 
     try {
@@ -24,11 +24,7 @@ const onGetUserById = async (req, res) => {
         const user = await User.GetUserById(req.params.id);
         if (!user)
             return res.status(400).json({
-                errors: [
-                    {
-                        msg: 'User Not Found'
-                    }
-                ]
+                msg: 'User Not Found'
             })
         return res.status(200).json(user);
     }catch(err) {
@@ -49,6 +45,7 @@ const OnCreateUser = async (req, res) => {
             return res.status(400).json({
                 errors: [
                     {
+                        param: 'Email',
                         msg: 'Email Alredy Exist'
                     }
                 ]
@@ -67,12 +64,12 @@ const OnCreateUser = async (req, res) => {
         const token = generateToken(payload);
         const url = `${req.protocol}://${req.hostname}:${process.env.PORT}/users/verify/${token}`;
 
-        sgMail.send({
+        /*sgMail.send({
             from: 'mohammed.ymik@outlook.com',
             to: email,
             subject: 'Verify your account',
             html: `Click <a href=${url}>here</a> to verify your account`
-        });
+        });*/
 
         return res.status(200).json({
             success: true,
@@ -123,8 +120,14 @@ const OnLogIn = async (req, res) => {
                 ]
             })
         }
-        return res.status(400).json({
-            msg: 'Logged in succesfuly'
+        const payload = {
+            userID: user._id
+        };
+        const token = generateToken(payload);
+
+        return res.status(200).json({
+            user: user,
+            token: token
         })  
     } catch(err) {
         console.log(err.message);
@@ -135,7 +138,7 @@ const OnLogIn = async (req, res) => {
 const onDeleteUserById = async (req, res) => {
     try {
         const rsl = await User.DeleteUserById(req.params.id);
-        return res.status(400).json({
+        return res.status(200).json({
             rsl
         })
     }catch(err) {
