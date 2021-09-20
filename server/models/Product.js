@@ -40,8 +40,8 @@ ProductSchema.statics.getAllProducts = async function(skip, limit) {
 
 ProductSchema.statics.fetchByTitle = async function(title, skip, limit) {
     try {
-        const products = await this.find({title: `/${title}/`}).skip(skip).limit(limit);
-
+        // const products = await this.find({title: `/${title}/`}).skip(skip).limit(limit);
+        const products = await this.find({ title: { $regex: '.*' + title + '.*'}}).skip(skip).limit(limit);
         return products;
     }catch(err) {
         throw err;

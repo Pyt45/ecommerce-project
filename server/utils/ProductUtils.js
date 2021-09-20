@@ -20,9 +20,9 @@ const changePermission = async (filepath) => {
 const uploadImage = (uploadDir, rawData, i, extention, product) => {
     return new Promise((resolve, reject) => {
         fs.writeFile(uploadDir, rawData, async (err) => {
-            if (err) reject();
+            if (err) reject(err);
 
-            await changePermission(uploadDir);            
+            // await changePermission(uploadDir);            
             const pathToImg = '/uploads/' + product._id + '-' + i + '.' + extention;
 
             const image = new Image();
@@ -33,7 +33,17 @@ const uploadImage = (uploadDir, rawData, i, extention, product) => {
     })
 }
 
+const deleteFile = (filepath) => {
+    return new Promise((resolve, reject) => {
+        fs.unlink(filepath, async (err) => {
+            if (err) reject(err);
+            resolve();
+        })
+    });
+}
+
 module.exports = {
     uploadImage,
-    changePermission
+    changePermission,
+    deleteFile
 }

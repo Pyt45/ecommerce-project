@@ -27,7 +27,7 @@ router
         check('lastname', 'lastname is empty').not().isEmpty(),
         check('email', 'invalid email').isEmail()
     ], userController.OnUpdateUserInfo)
-    .patch('/:id/changePAssword', auth, authUser, [
+    .patch('/:id/changePassword', auth, authUser, [
         check('password').isLength({ min: 6 }),
         check('newPassword').isLength({ min: 6 })
     ], userController.OnChangePassword)

@@ -18,8 +18,8 @@ const auth = (req, res, next) => {
             return next();
         }
         return res.status(400).json({
-            msg: 'Header auth not seted'
-        })
+            msg: 'No header provided'
+        });
     }catch(err) {
         throw err;
     }

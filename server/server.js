@@ -8,13 +8,11 @@ const path = require('path');
 const cors = require('cors');
 const app = express();
 
-
 connectDb(process.env.MONGO_URL);
 connectAdmin();
 
 app.use(express.json());
 app.use(express.urlencoded({ extends: true }));
-
 app.use(cors({
     origin: '*'
 }));

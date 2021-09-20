@@ -4,10 +4,22 @@ const generateToken = require('../utils/generateToken');
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const sgMail = require('@sendgrid/mail');
+const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 
 
 // sgMail.setApiKey(process.env.API_KEY);
+
+// const transporter = nodemailer.createTransport({
+//     host: process.env.HOST,
+//     service: process.env.SERVICE,
+//     port: 587,
+//     secure: true,
+//     auth: {
+//         user: process.env.USER,
+//         pass: process.env.PASS
+//     }
+// });
 
 const onGetAllUsers = async (req, res) => { 
     try {
@@ -126,7 +138,13 @@ const OnLogIn = async (req, res) => {
         const token = generateToken(payload);
 
         return res.status(200).json({
-            user: user,
+            user: {
+                _id: user._id,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                active: user.active,
+                role: user.role
+            },
             token: token
         })  
     } catch(err) {
@@ -226,7 +244,7 @@ const OnChangePassword = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty())
         return res.status(400).json(errors);
-    const { password, newPassword } = req.body;
+    let { password, newPassword } = req.body;
     try {
         const id = req.params.id;
         let user = await User.findOne({ _id: id });
