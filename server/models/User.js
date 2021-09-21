@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
 
+const Order = require('./Order');
+
 const UserSchema = new mongoose.Schema(
     {
         _id: {
@@ -19,7 +21,8 @@ const UserSchema = new mongoose.Schema(
         role: {
             type: String,
             default: 'User'
-        }
+        },
+        orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }]
     },
     {
         timestamps: true

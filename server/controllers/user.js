@@ -4,7 +4,7 @@ const generateToken = require('../utils/generateToken');
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const sgMail = require('@sendgrid/mail');
-const nodemailer = require('nodemailer');
+// const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 
 

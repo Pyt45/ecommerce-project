@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
+
 const Image = require('./Image');
+const Comment = require('./Comment');
 
 const ProductSchema = new mongoose.Schema(
     {
@@ -13,7 +15,8 @@ const ProductSchema = new mongoose.Schema(
         description: String,
         quantity: Number,
         thumbnail: String,
-        images: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Image' }]
+        images: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Image' }],
+        comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
     },
     {
         timestamps: true

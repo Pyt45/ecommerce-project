@@ -16,16 +16,12 @@
 // })();
 
 const { v4: uuidv4 } = require('./server/node_modules/uuid');
+let t = []
+const generateId = (id) => {
+    for (let i = 0; i < id; i++) {
+        t.push(uuidv4().replace(/\-/g, ''));
+        console.log(t[i]);
+    }
+}
 
-// let arr = []
-
-// const generateId = () => {
-//     for (let i = 0; i < 20; i++)
-//     {
-//         const id = uuidv4().replace(/\-/g, '')
-//         arr[i] = id;
-//         if (arr[i])
-//     }
-// }
-
-generateId(100);
+generateId(10);
