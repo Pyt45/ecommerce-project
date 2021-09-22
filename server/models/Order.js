@@ -16,13 +16,12 @@ const OrderSchema = new mongoose.Schema(
             type: String,
             default: () => uuidv4().replace(/\-/g, "")
         },
-        product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
-        quantity: Number,
         trackingNumber: String,
         orderStatus: {
             type: Number,
             default: ORDER_STATUS.PROCESSED[0]
         },
+        orderItems: { type: mongoose.Schema.Types.ObjectId, ref: 'OrderItem' },
         address: { type: mongoose.Schema.Types.ObjectId, ref: 'Address' }
     },
     {

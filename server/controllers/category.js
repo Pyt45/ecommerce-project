@@ -1,5 +1,6 @@
 const slugify = require('slugify');
 const Category = require('../models/Category');
+const SubCategory = require('../models/SubCategory');
 const { validationResult } = require('express-validator');
 const { findOne } = require('../models/Category');
 
@@ -86,10 +87,22 @@ const OnDeleteCategory = async (req, res) => {
     }
 }
 
+const onGetSubCategories = async () => {
+    try {
+        const { id } = req.params;
+        const subCaterogies = await SubCategory.find({ parent: id });
+        return res.status(200).json(subCaterogies);
+    }catch(err) {
+        console.log(err.message);
+        return res.status(500).send('Internal server error')
+    }
+}
+
 module.exports = {
     OnGetAllCategory,
     OnGetCategoryBySlug ,
     OnCreateCategory,
     OnUpdateCategory,
-    OnDeleteCategory
+    OnDeleteCategory,
+    onGetSubCategories
 }

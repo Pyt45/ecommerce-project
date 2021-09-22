@@ -5,6 +5,7 @@ const fs = require('fs');
 const { changePermission, uploadImage, deleteFile } = require('../utils/ProductUtils');
 const Product = require('../models/Product');
 const Image = require('../models/Image');
+const Category = require('../models/Category');
 
 
 const addThumbnailToProduct = async (req, res) => {
@@ -93,10 +94,15 @@ const createProduct = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty())
     return res.status(400).json(errors);
-    let { title, price, description, quantity } = req.body;
+    let { title, price, description, quantity, category, subCategories } = req.body;
     
     try {
-        const product = await Product.createProduct(title, price, description, quantity);
+        const cat = await Category.findOne({ _id: category });
+        if (!cat)
+            return res.status(400).json({
+                msg: 'Category not found'
+            })
+        const product = await Product.createProduct(title, price, description, quantity, category, subCategories);
         // console.log(imgUrl);
         return res.status(200).json({
             success: true,

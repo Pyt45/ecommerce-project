@@ -16,7 +16,7 @@ const onGetAllSubCategory = async (req, res) => {
 const onGetSubCategoryBySlug = async (req, res) => {
     try {
         const { slug } = req.params;
-        const subCategory = await Category.findOne({ slug: slug });
+        const subCategory = await SubCategory.findOne({ slug: slug });
         if (!subCategory)
             return res.status(400).json({
                 msg: 'subCategory not found'
@@ -52,16 +52,18 @@ const onUpdateSubCategory = async (req, res) => {
         return res.status(400).json(errors);
     try {
         const { slug } = req.params;
-        const { name } = req.body;
-        let subCategory = await Category.findOne({ slug: slug });
+        const { name, parent } = req.body;
+        const category = await Category.findOne({ _id: parent });
+        let subCategory = await SubCategory.findOne({ slug: slug });
         if (!subCategory)
             return res.status(400).json({
                 msg: 'subCategory not found'
             });
-        subCategory.name = name;
-        subCategory.slug = slugify(name);
-
-        await subCategory.save();
+        // subCategory.name = name;
+        // subCategory.slug = slugify(name);
+        // subCategory.parent = cat;
+        await SubCategory.updateOne({ slug: slug }, { name: name, slug: slugify(name), parent: category });
+        // await subCategory.save();
         return res.status(200).json({
             msg: 'subCategory updated'
         });

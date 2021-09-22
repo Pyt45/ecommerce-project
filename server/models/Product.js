@@ -15,17 +15,19 @@ const ProductSchema = new mongoose.Schema(
         description: String,
         quantity: Number,
         thumbnail: String,
-        images: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Image' }],
-        comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
+        // images: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Image' }],
+        // comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
+        category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
+        subCategories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory' }]
     },
     {
         timestamps: true
     }
 );
 
-ProductSchema.statics.createProduct = async function(title, price, description, quantity) {
+ProductSchema.statics.createProduct = async function(title, price, description, quantity, category, subCategories) {
     try {
-        const product = await this.create({title, price, description, quantity});
+        const product = await this.create({title, price, description, quantity, category, subCategories});
         return product;
     } catch(err) {
         throw err;

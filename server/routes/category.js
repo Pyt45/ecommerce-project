@@ -9,6 +9,7 @@ const categoryController = require('../controllers/category');
 router
     .get('/categories', categoryController.OnGetAllCategory)
     .get('/category/:slug', categoryController.OnGetCategoryBySlug)
+    .get('/category/subCategories/:id', categoryController.onGetSubCategories)
     .post('/category/create', auth, admin, [
         check('name', 'invalid category name').not().isEmpty()
     ], categoryController.OnCreateCategory)
