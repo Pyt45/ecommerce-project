@@ -3,6 +3,8 @@ const express = require('express');
 const connectDb = require('./utils/connectDb');
 const userRouter = require('./routes/user');
 const productRouter = require('./routes/product');
+const categoryRouter = require('./routes/category');
+const SubCategoryRouter = require('./routes/subCategory');
 const connectAdmin = require('./utils/connectAdmin');
 const path = require('path');
 const cors = require('cors');
@@ -27,6 +29,8 @@ app.get('/', (req, res) => {
 
 app.use('/users', userRouter);
 app.use('/products', productRouter);
+app.use('/categories', categoryRouter);
+app.use('/subCategories', SubCategoryRouter);
 
 
 app.use('*', (req, res) => {

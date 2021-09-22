@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { v4: uuid4v } = require('uuid');
-const Product = require('./Product');
+// const Product = require('./Product');
 
 const SubCategorySchema = new mongoose.Schema(
     {
@@ -8,8 +8,18 @@ const SubCategorySchema = new mongoose.Schema(
             type: String,
             default: () => uuid4v().replace(/\-/g, "")
         },
-        title: String,
-        products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
+        name: {
+            type: String,
+            trim: true
+        },
+        slug: {
+            type: String,
+            unique: true,
+            lowercase: true,
+            index: true
+        },
+        parent: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true }
+        // products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
     },
     {
         timestamps: true
