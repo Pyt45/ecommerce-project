@@ -149,6 +149,9 @@ const deleteProduct = async (req, res) => {
             return res.status(400).json({
                 msg: 'Product Not Found'
             });
+        // await deleteFile(product.thumbnail);
+        // for (let i = 0; i < product.images.length; i++)
+        //     await deleteFile(product.images[i].path);
         await Product.deleteOne({ _id: id });
 
         return res.status(200).json({

@@ -87,10 +87,12 @@ const OnDeleteCategory = async (req, res) => {
     }
 }
 
-const onGetSubCategories = async () => {
+const onGetSubCategories = async (req, res) => {
     try {
         const { id } = req.params;
-        const subCaterogies = await SubCategory.find({ parent: id });
+        const cat = await Category.findOne({ _id: id });
+        console.log(cat);
+        const subCaterogies = await SubCategory.find({ parent: cat });
         return res.status(200).json(subCaterogies);
     }catch(err) {
         console.log(err.message);

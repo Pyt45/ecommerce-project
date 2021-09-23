@@ -18,7 +18,7 @@ const SubCategorySchema = new mongoose.Schema(
             lowercase: true,
             index: true
         },
-        parent: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true }
+        parent: { type: mongoose.Schema.Types.String, ref: 'Category', required: true }
         // products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
     },
     {

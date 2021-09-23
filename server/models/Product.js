@@ -17,8 +17,8 @@ const ProductSchema = new mongoose.Schema(
         thumbnail: String,
         // images: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Image' }],
         // comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
-        category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
-        subCategories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory' }]
+        category: { type: mongoose.Schema.Types.String, ref: 'Category' },
+        subCategories: [{ type: mongoose.Schema.Types.String, ref: 'SubCategory' }]
     },
     {
         timestamps: true
@@ -36,7 +36,13 @@ ProductSchema.statics.createProduct = async function(title, price, description, 
 
 ProductSchema.statics.getAllProducts = async function(skip, limit) {
     try {
-        const products = await this.find().skip(skip).limit(limit);
+        const products = await this.find({})
+                .skip(skip)
+                .limit(limit)
+                .populate('category')
+                .populate('subCategories')
+                .sort([['createAt', 'desc']])
+                .exec();
         return products;
     }catch(err) {
         throw err;
