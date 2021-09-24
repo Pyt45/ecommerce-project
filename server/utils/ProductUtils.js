@@ -1,6 +1,7 @@
-const Image = require('../models/Image');
 const fs = require('fs');
 const fsPromise = require('fs').promises;
+const Image = require('../models/Image');
+const { Variant, Option } = require('../models/Variant');
 
 const changePermission = async (filepath) => {
     try {
@@ -17,19 +18,54 @@ const changePermission = async (filepath) => {
     }
 };
 
-const uploadImage = (uploadDir, rawData, i, extention, product) => {
+const addOptions = (option) => {
+    return new Promise( async (resolve, reject) => {
+        const opt = new Option({
+            value: option.value
+        });
+        await opt.save();
+        resolve(opt);
+    });
+}
+
+const addVariants =  (variant) => {
+    return new Promise(async (resolve, reject) => {
+        const vart = new Variant({
+            name: variant.name
+        })
+        const options = variant.options;
+        // let i = 0;
+        await options.forEach(async (option) => {
+            let opt = await addOptions(option);
+            vart.options.push(opt);
+            // i++;
+            // if (i == options.length)
+        })
+        await vart.save();
+        resolve(vart);
+    })
+}
+
+const uploadImage = (uploadDir, rawData, iid, extention, id) => {
     return new Promise((resolve, reject) => {
         fs.writeFile(uploadDir, rawData, async (err) => {
             if (err) reject(err);
 
             // await changePermission(uploadDir);            
-            const pathToImg = '/uploads/' + product._id + '-' + i + '.' + extention;
+            const pathToImg = '/uploads/' + id + '-' + iid + '.' + extention;
 
-            const image = new Image();
-            image.path = pathToImg;
-            await image.save();
+            const image = await new Image({
+                path: pathToImg
+            }).save();
+
             resolve(image);
         })
+    })
+}
+
+const updateImage = (uploadDir, rawData, iid, extention, id) => {
+    return Promise((resolve, reject) => {
+        // const img = await Image.findOne({ _id:  });
     })
 }
 
@@ -45,5 +81,6 @@ const deleteFile = (filepath) => {
 module.exports = {
     uploadImage,
     changePermission,
-    deleteFile
+    deleteFile,
+    addVariants
 }

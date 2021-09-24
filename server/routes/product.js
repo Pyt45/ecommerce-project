@@ -12,6 +12,7 @@ const productController = require('../controllers/product');
 router
     .get('/', auth, productController.fetchProducts)
     .get('/search', auth, productController.fetchProductByTitle)
+    .get('/search/:slug', auth, productController.fetchProductBySlug)
     .post('/create', auth, admin, [
         check('title').not().isEmpty(),
         check('price').isFloat(),
@@ -20,6 +21,7 @@ router
     ] ,productController.createProduct)
     .post('/create/:id/thumbnail', auth, admin, productController.addThumbnailToProduct)
     .post('/create/:id/images', auth, admin, productController.addImagesToProduct)
+    .post('/create/:id/variants', auth, admin, productController.addVariantsToProduct)
     .put('/update/:id', auth, admin, [
         check('title').not().isEmpty(),
         check('price').isFloat(),
@@ -27,8 +29,9 @@ router
         check('quantity').isNumeric()
     ], productController.updateProduct)
     .patch('/update/:id/thumbnail', auth, admin, productController.updateProductThumbnail)
-    .put('/update/:id/images', auth, admin, productController.updateProductImages)
+    .patch('/update/:id/image/:idimg', auth, admin, productController.updateProductImage)
     .delete('/delete/:id', auth, admin, productController.deleteProduct)
+
 
 
 module.exports = router;

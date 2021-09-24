@@ -16,7 +16,7 @@ connectAdmin();
 
 
 app.use(express.json());
-app.use(express.urlencoded({ extends: true }));
+// app.use(express.urlencoded({ extends: true }));
 app.use(cors({
     origin: '*'
 }));

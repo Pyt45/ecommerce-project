@@ -11,7 +11,7 @@ const CommentSchema = new mongoose.Schema(
         },
         content: String,
         rating: Number,
-        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+        user: { type: mongoose.Schema.Types.String, ref: 'User' }
     },
     {
         timestamps: true
