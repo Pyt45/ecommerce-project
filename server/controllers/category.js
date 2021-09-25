@@ -2,7 +2,6 @@ const slugify = require('slugify');
 const Category = require('../models/Category');
 const SubCategory = require('../models/SubCategory');
 const { validationResult } = require('express-validator');
-const { findOne } = require('../models/Category');
 
 const OnGetAllCategory = async (req, res) => {
     try {
