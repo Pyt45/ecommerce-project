@@ -4,7 +4,7 @@ const generateToken = require('../utils/generateToken');
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const sgMail = require('@sendgrid/mail');
-// const nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 
 
@@ -14,12 +14,18 @@ const jwt = require('jsonwebtoken');
 //     host: process.env.HOST,
 //     service: process.env.SERVICE,
 //     port: 587,
-//     secure: true,
+//     secure: process.env.NODE_ENV !== "development",
 //     auth: {
 //         user: process.env.USER,
 //         pass: process.env.PASS
 //     }
 // });
+
+const transport = nodemailer.createTransport({
+    port: 1025,
+    ignoreTLS: true,
+    // other settings...
+})
 
 const onGetAllUsers = async (req, res) => { 
     try {
@@ -82,6 +88,18 @@ const OnCreateUser = async (req, res) => {
             subject: 'Verify your account',
             html: `Click <a href=${url}>here</a> to verify your account`
         });*/
+        // transporter.sendMail({
+        //     from: 'mohammed.ymik@outlook.com',
+        //     to: email,
+        //     subject: 'Verify your account',
+        //     html: `Click <a href=${url}>here</a> to verify your account`
+        // })
+        transport.sendMail({
+            from: 'mohammed.ymik@outlook.com',
+            to: email,
+            subject: 'Verify your account',
+            html: `Click <a href=${url}>here</a> to verify your account`
+        })
 
         return res.status(200).json({
             success: true,
@@ -191,6 +209,7 @@ const verfiy = async (req, res) => {
         }
         user.active = true;
         await user.save();
+        return res.redirect(process.env.CLIENT_URL);
         return res.status(200).json({
             msg: 'Account is activated'
         });
@@ -230,6 +249,13 @@ const OnUpdateUserInfo = async (req, res) => {
             subject: 'Verify your account',
             html: `Click <a href=${url}>here</a> to verify your account`
         });*/
+        // transporter.sendMail({
+        //     from: 'mohammed.ymik@outlook.com',
+        //     to: email,
+        //     subject: 'Verify your account',
+        //     html: `Click <a href=${url}>here</a> to verify your account`
+        // })
+
 
 
         return res.status(200).json({
@@ -293,6 +319,13 @@ const OnResetEmail = async (req, res) => {
             subject: 'Resetyour account',
             html: `Click <a href=${url}>here</a> to reset your email`
         });*/
+        // transporter.sendMail({
+        //     from: 'mohammed.ymik@outlook.com',
+        //     to: email,
+        //     subject: 'Verify your account',
+        //     html: `Click <a href=${url}>here</a> to verify your account`
+        // })
+
         return res.status(200).json({
             url: url
         });

@@ -44,83 +44,6 @@ const addThumbnailToProduct = async (req, res) => {
     });
 };
 
-const sleep = (ms) => {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    })
-}
-
-const addVariantsToProduct  = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { variants } = req.body;
-        // let newVart;
-        let product = await Product.findOne({ _id: id });
-        if (!product)
-            return res.status(404).json({
-                msg: 'Product not found'
-            })
-
-        let i = 0;
-        await variants.forEach(async (variant) => {
-            // newVart = await new Variant({
-            //     name: variant.name
-            // }).save();
-            // const options = variant.options;
-            // options.forEach(async (e) => {
-            //     let option = await new Option({
-            //         value: e.value
-            //     }).save()
-            //     newVart.options.push(option);
-            // })
-            // await newVart.save();
-            // product.variants.push(newVart);
-            // await product.save();
-            const newVart = await addVariants(variant);
-            await newVart.save();
-            product.variants.push(newVart);
-            i++;
-            if (i == variants.length)
-                await product.save();
-        });
-
-        product = await Product.findOne({ _id: id }).populate('variants'); 
-        return res.status(200).json(product);
-
-        // for (let i = 0; i < variants.length; i++) {    
-        //     const names = Object.keys(variants[i]);
-        //     console.log(names)
-        //     for (let j = 0; j < names.length; j++) {
-        //         let newVariant = new Variant({
-        //             name: names[j]
-        //         });
-        //         await newVariant.save();
-        //         // console.log(variants[names[j]])
-        //         const options = variants[i][names[j]]
-        //         // console.log(options)
-        //         for (let k = 0; k < options.length; k++) {
-        //             const newOption = new Option({
-        //                 value: options[k]
-        //             });
-        //             await newOption.save();
-        //             newVariant.options.push(newOption);
-        //         }
-        //         await newVariant.save();
-        //     }
-        // }
-        // const vars = new Variant({
-        //     variant: [
-        //         new Option({
-        //             option: 
-        //         });
-        //     ]
-        // })
-    } catch(err) {
-        console.log(err.message);
-        return res.status(500).send('Internal server error');
-    }
-}
-
 const createProduct = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty())
@@ -378,6 +301,62 @@ const updateProductImage = async (req, res) => {
     }
 };
 
+const createVariant = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { variant } = req.body;
+        const product = await Product.findOne({ _id: id });
+
+        if (!product)
+            return res.status(400).json({
+                msg: 'Product not found'
+            });
+        if (variant['name'] == null)
+            return res.status(400).json({
+                msg: 'varinat must contain name as a key'
+            })
+        const newVariant = new Variant({
+            name: variant.name
+        });
+        await newVariant.save()
+        product.variants.push(newVariant);
+        await product.save()
+        return res.status(200).json(product);
+    }catch(err) {
+        console.log(err.message);
+        return res.status(500).send('Internal server error');
+    }
+}
+
+const addOptionsToVariant = async (req, res) => {
+    try {
+        const { id, idvariant } = req.params;
+        const { options } = req.body;
+        let product = await Product.findOne({ _id: id });
+        const variant = await Variant.findOne({ _id: idvariant });
+
+        if (!product || !variant)
+            return res.status(400).json({
+                msg: 'Product or varinat related to product not found'
+            });
+        for (let i = 0; i < options.length; i++) {
+            const option = new Option({
+                value: options[i].value
+            })
+            await option.save();
+            variant.options.push(option);
+            await variant.save();
+        }
+        product = await Product.findOne({ _id: id })
+                .populate('category')
+                .populate('subCategories')
+                .populate('variants')
+        return res.status(200).json(product);
+    }catch(err) {
+        console.log(err.message);
+        return res.status(500).send('Internal server error');
+    }
+}
 
 module.exports = {
     fetchProducts,
@@ -390,5 +369,6 @@ module.exports = {
     deleteProduct,
     addThumbnailToProduct,
     addImagesToProduct,
-    addVariantsToProduct
+    createVariant,
+    addOptionsToVariant
 }

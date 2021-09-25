@@ -21,7 +21,8 @@ router
     ] ,productController.createProduct)
     .post('/create/:id/thumbnail', auth, admin, productController.addThumbnailToProduct)
     .post('/create/:id/images', auth, admin, productController.addImagesToProduct)
-    .post('/create/:id/variants', auth, admin, productController.addVariantsToProduct)
+    .post('/create/:id/variant', productController.createVariant)
+    .post('/create/:id/variant/:idvariant/options', productController.addOptionsToVariant)
     .put('/update/:id', auth, admin, [
         check('title').not().isEmpty(),
         check('price').isFloat(),

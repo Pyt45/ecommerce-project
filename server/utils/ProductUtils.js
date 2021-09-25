@@ -63,6 +63,12 @@ const uploadImage = (uploadDir, rawData, iid, extention, id) => {
     })
 }
 
+const sleep = (ms) => {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    })
+}
+
 const updateImage = (uploadDir, rawData, iid, extention, id) => {
     return Promise((resolve, reject) => {
         // const img = await Image.findOne({ _id:  });

@@ -1,0 +1,7 @@
+{
+    "service": "smtp",
+    "auth": {
+      "user": "MAIL_USERNAME",
+      "pass": "MAIL_PASSWORD"
+    }
+  }
