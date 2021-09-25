@@ -210,9 +210,9 @@ const verfiy = async (req, res) => {
         user.active = true;
         await user.save();
         return res.redirect(process.env.CLIENT_URL);
-        return res.status(200).json({
-            msg: 'Account is activated'
-        });
+        // return res.status(200).json({
+        //     msg: 'Account is activated'
+        // });
     }catch(err) {
         console.log(err.message);
         res.status(500).send('server error');
