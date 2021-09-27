@@ -4,6 +4,7 @@ const OrderItemSchema = new mongoose.Schema(
     {
         product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
         quantity: Number
+        // discount: Number
     },
     {
         timestamps: true
